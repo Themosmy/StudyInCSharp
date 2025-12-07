@@ -1,4 +1,6 @@
 //ARRAY (VETORES)
+using utilidades.Matematica;
+
 int[] numeros = { 10, 20, 30, 40, 50};
 Console.WriteLine(numeros[0]);
 
@@ -178,48 +180,256 @@ Console.WriteLine(resultado);
 
 
 // ESTRUTURA DE DADOS SIMPLES
+// Mesmo sem usar coleções complexas, dá para enteder: 
+    // Array -> Tamanho fixo
+    // List <T> -> Tamanho dinâmico
+
+using System.Collections.Generic;
+
+List<string> nomes = new List<string>();
+nomes.Add("Caio");
+nome.Add("Kaka");
+Console.WriteLine(nomes[0]);
 
 // NULL SAFETY (PORTEÇÃO CONTRA VALORES NULOS)
+string? nome = null; // pode ser nulo
+if (nome != null)
+    Console.WriteLine(nome.ToUpper());
+    //Com o operador condicional
+    Console.WriteLine(nome?.ToUpper() ?? "Sem nome");
+
 
 //---FUNDAMENTOS INTERMEDIÁRIOS DO C# (ANTES DA POO)//
+// stack = gavetas pequenas e rápidas (guarda valores simples e temporários)
+// Heap = armário grande e lento (guarda objetos, listas, strings etc )
+int x = 10; // armazenado na stack
+int[] numeros = {1, 2}; // referência na stack, mas os dados ficam na heap
 
-// MEMÓRIA NO C#: STACK X HEAP
+/*🧠 1. Memória no C#: Stack x Heap
+
+Essa é uma das partes mais importantes pra entender o comportamento real do código.
+
+Tipo	Onde é armazenado	Exemplo	Quando é limpo
+Stack (Pilha)	Memória rápida e pequena	int, double, bool, struct	Automaticamente, quando sai do escopo
+Heap	Memória grande e lenta	class, string, array, List<T>	Gerenciada pelo Garbage Collector (GC)MEMÓRIA NO C#: STACK X HEAP */
 
 // STRUCT VS CLASS
+struct Ponto
+{
+    public int X;
+    public int Y;
+}
+Ponto p1 = new Ponto { X = 10, Y = 20};
+Ponto p2 = p1;
+p2.X = 99;
+
+Console.WriteLine(p1.X); // 10 -> Cópia independente
+
+
 
 // MÉTODOS ESTÁTICOS VS DE INSTÂNCIA
-    // ESTÁTICO
+    /* ESTÁTICO
+    Pertence á classe, não a um objeto*/
+class calculadora
+{
+    public static int Somar(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+int resultado1 = calculadora.Somar(2, 3);
+
     // DE INSTÂNCIA (NÃO USAR STATIC)
+class Pessoa
+{
+    public string Nome;
+
+    public void Falar()
+    {
+        Console.WriteLine($"Olá, eu sou {Nome}");
+    }
+}
+Pessoa p = new Pessoa {Nome = "Caio"};
+p.Falar();
+
+/**Dica:
+Use static para utilidades, como Math.Sqrt(), Console.WriteLine() etc.
+Use métodos normais quando o comportamento depende do estado do objeto.*/
+
 
 // TIPOS ESPECIAIS DE PARÂMENTROS(REF, OUT, PARAMS)
+    //REF => envia o valor por referência | Permite alterar a variável original. 
+    void Dobrar(ref int numero)
+{
+    numero *= 2;
+}
 
-    //REF
-    //OUT
-    //PARAMS
+int x = 5;
+Dobrar(ref x);
+Console.WriteLine(x); // 10
+
+    //OUT -> semelhante a ref, mas usado apenas para retorno
+bool TentarConverter(string texto, out int resultado)
+{
+    return int.TryParse(texto, out resultado);    
+}
+if (TentarConverter("123", out int valor))
+{
+    Console.WriteLine($"Valor convertido: {valor}");
+}
+
+    //PARAMS --> Permite número variável de argumentos
+int Somar(params int[] numeros)
+{
+    int soma = 0;
+    foreach (int n in numeros)
+        soma += n;
+    return soma;
+}
+
+Console.WriteLine(Somar(1, 2, 3, 4, 5)); // 15
+
+//Enumerações(enum)
+enum DiaDaSemana
+{
+    Segunda,
+    Terça,
+    Quarta,
+    Quinta,
+    Sexta,
+    Sabado,
+    Domingo
+}
+DiaDaSemana hoje = DiaDaSemana.Quinta;
+Console.WriteLine(hoje); // Quinta
 
 // RECORDS
+public record Pessoa(string Nome, int Idade);
+
+var p1 = new Pessoa("Caio", 24);
+var p2 = p1 with { Idade = 26};
+
+Console.WriteLine(p1); // Pessoa {Nome = Caio, idade = 24}
+Console.WriteLine(p2); // Pessoa {Nome = Caio, idade = 26}
 
 // NAMESPACES E ASSEMBLIES
+/*Namespace: Organização Lógica(como uma pasta virtual)
+Assembly: Arquivo físico compilado (.dll ou  .exe)*/
+
+namespace utilidades.Matematica
+{
+    public class calculos
+    {
+        public static int Dobrar(int n) => n * 2;
+    }
+}
+using utilidades.Matematica;
+Console.WriteLine(calculos.Dobrar(10));
+
 
 // ARGUMENTOS DE LINHA DE COMANDO
+/*dotnet run argumento1 argumento2*/
+static void Main(string[] args)
+{
+    Console.WriteLine($"Primeira: {args[0]}");
+    Console.WriteLine($"Segundo: {args{1}}");
+}
 
 // MANIPULAÇÃO DE ARQUIVOS(SYTEM.IO)
+    // Criar Arquivo:
+using System.IO;
+File.WriteAllText("dados.txt", "Olá mundo");
+
+    // Ler um arquivo:
+string conteudo = File.ReadAllText("dados.txt");
+Console.WriteLine(conteudo);
+
+    // Adicionar Linhas:
+File.AppendAllText("dados.txt", "\nNova linha adicionada");
+
+    // Vericar existência:
+if (file.Exists("dados.txt"));
+    Console.WriteLine("Arquivo existe!");
 
 // NULLABLE TYPES (VALORES NULOS EM TIPOS PRIMITIVOS)
+/*Por padrão, int, bool, double não aceitam null
+Mas é possível torná-los opcionais:*/
+int? idade = null;
+
+if (idade.HasValue)
+    Console.WriteLine(idade.Value);
+else 
+    Console.WriteLine("Sem valor definido");
+
+int idadeFinal = idade ?? 18; // usa 18 se for null
 
 // TUPLAS  -- RETORNAR MÚLTIPLOS VALORES
+(string nome, int idade) ObterPessoa1()
+{
+    return ("Caio", 25);
+}
+
+var pessoa = ObterPessoa1();
+Console.WriteLine($"{pessoa.nome}, {pessoa.idade} anos");
+/*Ideal para funções simples sem precisar criar uma classe só pra retorno*/
+
 
 // ESCOPO DE VARIAVÉIS E LIFETIME
+if (true)
+{
+    int numero = 5; // existe somente aqui
+}
+Console.WriteLine(numero); // ERRO
+/*Mas objetos em heap (como new) vivem até o garbage Collector liberar*/
 
 // GARBAGE COLLECTOR E USING
+using (SteamWriter sw = new SteamWriter("log.txt"))
+{
+    sw.WriteLine("Gravando log...");
+} // aqui o GC chama dispose() automaticamente -- Sem using, o arquivo ficaria "preso" na memória até o GC agir
 
 // TIPOS DINÂMICOS (COM CAUTELA)
+dynamic x = 10;
+x = "texto";
+Console.WriteLine(x);
+/*Evite usar dynamic sem necessidade, pois perde a checagem de tiop em tempo de compilação - o que reduz segunrança e performance.*/
+
 
 // TIPOS ANÔNIMOS
+var pessoa2 = new { Nome = "Caio", Idade = 25 };
+Console.WriteLine(pessoa2.Nome);
+
 
 // EXPRESSÕES LAMBDA(PRÉVIA)
+Func<int, int> dobrar = x => z * 2;
+Console.WriteLine(dobrar(5)); // 10;
 
-// TIPOS ANÔNIMOS
+
+/*MINI PROJETO
+Memória:
+  Stack → valores simples
+  Heap → objetos e strings
+
+Tipos:
+  Struct → valor
+  Class → referência
+  Enum → conjunto fixo
+  Record → dados imutáveis
+
+Métodos:
+  static → da classe
+  instance → do objeto
+  ref/out/params → controle de parâmetros
+
+Arquivos:
+  System.IO → leitura e escrita
+
+Segurança:
+  Nullable, TryParse, using → boas práticas
+
+*/
+
 
 // --- FUNDAMENTOS AVANÇADOS PROGRAMAÇÃO ORIETADA A OBJETO ----
 
