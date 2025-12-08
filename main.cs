@@ -434,10 +434,99 @@ Segurança:
 // --- FUNDAMENTOS AVANÇADOS PROGRAMAÇÃO ORIETADA A OBJETO ----
 
 // CLASSES E OBJETOS
+/*Uma classe é um molde, modelo, planta, blueprint
+
+Ela descreve:
+- Quais dados um objeto terá(atributo/propriedades
+- Quais ações ele pode realizar (método/funções)
+- Como ele deve se comportar
+
+Exemplo de modelo mental:
+Classe = planta de uma casa
+Objeto = Casa construída baseada nessa planta
+
+*/
+
+/*O que é um objeto?
+Objeto é criar instância de uma classe
+Voce criar objeto com New.*/
+Pessoa3 p = new Pessoa3();
+// Aqui pessoa é a Classe, p é um objeto real na memória
+
+// Estrutura completa de uma classe em C#
+class Pessoa4
+{
+    //1. Atributos (dados internos)
+    public string Nome;
+    public int Idade;
+
+    //2. Propriedades (forma moderna de expor dados)
+    public string Email { get; set;}
+
+    //3. Métodos (comportamentos)
+    public void falar()
+    {
+        Console.WriteLine("Olá !");
+    }
+    //4. Construtor
+    public Pessoa4(string nome, int idade)
+    {
+        Nome = nome;
+        Idade = idade;
+    }
+}
+// atributos VS propriedades
+// Atributos (campos)
+//Usados para dadsos internos, raramente expostos publicamente
+public int idade;
+
+//propriedades - A forma moderna, segura e recomendada
+public int Idade5 {get; set;}
+
+// as propriedades podem ter lógica
+private int _idade;
+public int Idade
+    {
+        get => _idade;
+        set
+        {
+            if(value < 0 throw new Exception("Idade inválida"));
+            _idade = value;
+        }
+    }
+// MÉTODOS - O COMPORTAMENTO DA CLASSE
+public void Apresentar()
+{
+    console.WriteLine($"Meu nome é {Nome} e tenho {idade}")
+}
 
 // CONSTRUTORES
+Pessoa p = new Pessoa("Caio", 25);
+
+public Pessoa(string nome, int idade)
+{
+    nome = nome;
+    idade = idade;
+}
+//Construtor sem parâmentros
+public Pessoa() {}
+
+// construtor com parâmetros opcionais;
+public pessoa(string nome = "Sem nome"){ }
+
+// Instanciando objetos
+Pessoa pessoa = new Pessoa ("Ana", 21);
+pessoa.Apresentar();
+
+// Palavra-Chave this
+// this se refere ao objeto atual
+public Pessoa(string nome)
+{
+    this.Nome = nome;
+}
 
 // PROPRIEDADES
+
 
 // ENCAPSULAMENTO
 
@@ -454,6 +543,33 @@ Segurança:
 // MINI PROJETO
 
 // --- DELGATES, EVENTOS E EXPRESSÕES LAMBDA --- 
+
+//  ---- PADRÕES MODERNOS
+
+// INTERFACES - O CONTRATO ENTRE CLASSES
+
+// ABSTRAÇÃO
+
+// GENÉRICOS
+
+//COLEÇÕES E LINQ AVANÇADA
+
+// MANIPULAÇÃO DE ARQUIVOS
+
+// MANIPULAÇÃO DE JSON (DADOS ESTRUTURADOS)
+
+// ASSÍCRONO (ASYNC / AWAIT)
+
+// PADRÃO MVC (MODEL - VIEW - CONTROLLER)
+
+// INJEÇÃO DE DEPENDÊNCIA (DI)
+
+// ARQUITETURA E BOAS PRATICAS
+
+// TESTE UNITÁRIOS (INTRODUÇÃO)
+
+// EXERCÍCIO PRÁTICA - MINI API SIMULADA (SEM SERVIDOR)
+
 
 // ---- 2 - LINQ E PROGRAMAÇÃO FUNCIONAL ----- //
 
