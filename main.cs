@@ -526,15 +526,242 @@ public Pessoa(string nome)
 }
 
 // PROPRIEDADES
+public class pessoa
+{
+    public string Nome { get; set; } // Leitura e escrita pública
+    public int Idade { get; private set;} // Só leitura pública; escrita só detnro da classe
+
+    // Property com backing field para validação
+    private decimal _salario;
+    public decimal _salario
+    {
+        get => _salario;
+        set
+        {
+            if(value < 0) throw new ArgumentException("Salário não pode ser negativo");
+            _salario = value;
+        }
+    }
+
+    // Propriedade computada 
+    public bool EhAdulto => Idade >= 18; // Expression - bodied
+
+    // Init-Only (C# 9+): permite set apenas ao inicializar o objeto
+    public string CPF { get; init; }
+
+    // Exemplo de notificação de mudança (simplificado)
+    private string _email;
+    public string Email
+    {
+        get => _email;
+        set
+        {
+            if(_email != value)
+            {
+                _email = value;
+                OnEmailChanged();
+            }
+        }
+
+    }
+    protected void OnEmailChanged(){ /*Dispara evento ou INotifyPropertyChanged*/}
+
+}
+/*Boas práticas:
+
+Use auto-properties quando não precisar de lógica no setter/getter.
+
+Use backing field quando precisar validação, lazy init ou lógica.
+
+Prefira private set / init para imutabilidade parcial.
+
+Para UIs (WPF, Xamarin, MAUI) implemente INotifyPropertyChanged para bindings.
+
+Como praticar:
+
+Reescreva classes que usam campos públicos para usar propriedades com validação.
+
+Construa um ViewModel simples que notifique mudanças e ligue a uma UI fake (console ou WPF).*/
+
 
 
 // ENCAPSULAMENTO
+/*Encapsulamento é a ideia de ocultar detalhes internos e expor uma interface mínima, controlando 
+acesso e mantendo invariantes do objeto. Em C#, isso é feito com modificadores de acesso 
+(private, protected, internal, public), propriedades e métodos.
+
+Principais pontos:
+
+- Campos privados e propriedades públicas protegem o estado.
+- Forneça métodos para operações que preservam invariantes (em vez de permitir alterações diretas).
+- Use readonly/const para dados imutáveis.
+- internal controla visibilidade dentro do assembly.*/
+
+public class ContaBancaria
+{
+    private decimal _saldo; // campo encapsulado
+
+    public decimal saldo => _saldo; // Leitura apenas
+
+    public void Depositar(decimal valor)
+    {
+        if(valor <= 0) throw new ArgumentException("Valor Inválido");
+        _saldo += valor;
+    }
+
+    public bool Sacar(decimal valor)
+    {
+        if(valor <= 0 ) return false;
+        if(valor > _saldo) return false;
+        _saldo -= valor;
+        return true;
+    }
+}
+ /*Armadilhas comuns:
+
+Expor coleções internas diretamente (ex.: public List<T> Items) — prefere IReadOnlyList<T> ou retornar uma cópia/AsReadOnly().
+
+Tornar tudo public demais — reduz encapsulamento.
+
+Como praticar:
+
+Pegue uma classe com muitos campos/variáveis públicas e transforme em uma API encapsulada com métodos claros e testes de unidade que validem invariantes.*/
+
 
 // HERANÇA
+/*Herança permite que uma classe (subclasse/derived) reutilize e especialize comportamento de outra (base). Em C#: class Filho : Pai.
 
-// POLIMORFISMO
+Conceitos principais:
+
+virtual em membro da base permite override.
+
+override na subclasse altera comportamento.
+
+sealed impede herdabilidade de uma classe ou override de um método.
+
+abstract define membros/métodos que devem ser implementados nas subclasses.
+
+Construtores: chamamos base(...) para inicializar a parte base.
+
+Exemplo simples:*/
+
+public abstract class Animal
+{
+    public string Nome { get; set; }
+    public Animal(string nome) => Nome = nome;
+
+    public virtual string EmitirSom() => "..."; // Comportamento padrão (Override Opcional)
+    public abstract void Comer();
+}
+
+public class Cachorro : Animal
+{
+    public Cachorro(string nome) : base(nome) { }
+    
+    public override string EmitirSom() => "Au Au";
+    public override void Comer() => Console.WriteLine($"{Nome} come ração");
+}
+public sealed class PastorAlemao: Cachorro
+{
+    public PastorAlemao(string nome) : base(nome) { }
+}
+/*Quando usar:
+
+Use herança quando existir uma relação “é um” clara e quando deseja compartilhar implementação.
+
+Se só precisa compartilhar contratos, prefira interfaces (ou composição) em vez de herança múltipla (C# não permite herança múltipla de classes).
+
+Armadilhas:
+
+Herança excessiva leva a hierarquias complicadas e fracas a mudanças (fragile base class problem).
+
+Preferir composição quando possível (has-a) — "composição sobre herança".
+
+Como praticar:
+
+Modele hierarquias simples (Veículo → Carro, Moto) e depois refatore para usar composição se notar duplicação.*/
+
+/* POLIMORFISMO
+Polimorfismo = “muitas formas”. Em C# há duas formas principais:
+
+Polimorfismo em tempo de compilação (overloading / generics)
+
+Method overloading: mesmo nome, assinaturas diferentes.
+
+Polimorfismo em tempo de execução (overriding)
+
+Usando virtual / override e chamando via referência de base para executar a implementação da subclasse.*/
+
+//Overloading(compile-time)
+public class calculadora
+{
+    public int Soma(int a, int b) => a + b;
+    public double Soma(double a, double b) => a + b;
+}
+
+//Runtime Polymorphism
+public abstract class Forma
+{
+    public abstract double Area();
+}
+
+public class Retangulo : Forma
+{
+    public double Largura { get; set;}
+    public double Altura { get; set;}
+    public override double Are() => Largura * Altura;
+}
+
+public class Circulo : Forma
+{
+    public double Raio { get; set; }
+    public override double Area() => Math.PI * Raio * Raio;
+}
+
+Forma f1 = new Retangulo { Largura = 2, Altura = 3 };
+Forma f2 = new Circulo {Raio = 1 };
+Console.WriteLine(f1.Area()); // 6 -> Chama Rentangulo.Area()
+Console.WriteLine(f2.Area()); // π -> chama Circulo.Area()
+
+/*Outros pontos:
+
+Interfaces também suportam polimorfismo: você pode ter IRepositorio com múltiplas implementações.
+
+Covariância/Contravariância em genéricos permite certo polimorfismo em tipos genéricos (IEnumerable<Derived> → IEnumerable<Base> é covariante).
+
+Armadilhas:
+
+Misturar new (esconder método) com override pode confundir — new oculta membro da base, não substitui em tempo de execução.
+
+Lembre de marcar virtual na base se quiser permitir override.
+
+Como praticar:
+
+Faça um conjunto de formas (círculo, quadrado, triângulo) e processe-os via uma coleção de Forma chamando Area() — observe o dispatch dinâmico.*/
 
 // TIPOS ANÔNIMOS
+
+/*Tipos anônimos em C# são úteis para criar objetos com propriedades nomeadas sem declarar uma classe. 
+São imutáveis (propriedades somente leitura), tipados anonimamente e normalmente usados com var e com LINQ.
+
+Sintaxe: */
+
+var anon = new { Nome = "Caio", Idade = 30 };
+Console.WriteLine(anon.Nome); // "Caio"
+// anon.Nome = "outro"; // Erro: propriedade eé get-Only
+
+// Com LINQ
+
+var pessoas = new[]
+{
+    new { Nome = "Ana", Idade = 25, Cidade = "SP"},
+    new { NOme = "Beto", Idade = 30, Cidade = "RJ"}
+};
+
+var projeccao = pessoas.Select(p => new {p.Nome, AnoNascimento = DataTime.Now.Year - p.Idade });
+
+foreach(var x in projeccao)
+    Console.WriteLine($"{x.Nome} nasceu em {x.AnoNascimento}");
 
 // LINQ (INTRODUÇÃO)
 
@@ -586,7 +813,6 @@ public Pessoa(string nome)
 // SIGNALR
 
 // BLAZOR
-
  
 
 
