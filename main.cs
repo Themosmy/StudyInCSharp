@@ -764,328 +764,62 @@ foreach(var x in projeccao)
     Console.WriteLine($"{x.Nome} nasceu em {x.AnoNascimento}");
 
 // LINQ (INTRODUÇÃO)
-using System.Linq;
-
-List<int> numeros = new List<int> {1, 2, 3, 4, 5, 6};
-
-var pares = numeros.Where(nameof => n % 2 == 0).ToList();
-
-foreach (var n in pares)
-    Console.WriteLine(n); // 2, 4, 6
-
-/*LINQ = Language Integrated Query
-Ele te dá poder de filtragem, ordenação e seleção direto em listas, arrays, etc.*/
 
 // TRATAMENTO DE ERROS (CATCH/TRY/FINALLY)
-try
-{
-    Console.Write("Digite um número");
-    int numero = int.Parse(Console.ReadLine());
-    Console.WriteLine($"Você digitou {numero}");
-}
-catch (FormaException)
-{
-    Console.WriteLine("Erro: formato inválido!");
-}
-finally
-{
-    Console.WriteLine("Finalizando Execução...");
-}
+
+// MINI PROJETO
 
 // --- DELGATES, EVENTOS E EXPRESSÕES LAMBDA --- 
+/*OBJETIVO
+Entender como o C# trata funções como dados, permitindo criar callbacks, eventos e sistemas reativos.
+Aqui você começa a pensar como o compilador do C# — e ganha domínio sobre a base de funcional programming no .NET.
 
-class Botão
-{
-    public event Action Clicado;
+1. Delegates - o que são e por que existem
+Definição:
+Um Delegate é um tipo que representa uma refêrencia para um método. Ele permite armazenar métodos em variáveis 
+e chamá-los dinamicos.
 
-    public void Clicar()
-    {
-        Console.WriteLine("Botão Clicado");
-        Clicado?Invoke();
-    }
-}
+sintaxe básica:
+*/
+delegate void MonstrarMensagem(string texto);
 
 class programa
 {
+    static void Exibir(string texto)
+    {
+        Console.WriteLine(Texto);
+    }
+
     static void Main()
     {
-        var botao = new Botao();
-
-        botao.Clicado += () => Console.WriteLine("Abrindo menu ...");
-        botao.Clicado += () => Console.WriteLine("Tocando som de Clique ...");
-
-        botao.Clicar();
+        MonstrarMensagem msg = Exibir; // referência ao método
+        msg = ("Olá, delegate");
     }
 }
+/*🧩 Explicação:
 
-/*Erros Comuns
+delegate void MostrarMensagem(string texto); define o molde de um método (assinatura).
 
-❌ Esquecer Invoke() — o delegate não executa sozinho.
-❌ Não usar ?.Invoke() — se o delegate for null, gera NullReferenceException.
-❌ Confundir delegate com interface — o delegate não tem membros, só referência de método.
-❌ Criar delegate personalizado desnecessário — use Action/Func/Predicate quando possível.
+msg("Olá, delegate!") executa o método referenciado.
 
-🔹 8. Exercícios Práticos
+Um delegate é como um ponteiro seguro para função (tipo function pointer do C/C++).*/
 
-Crie um delegate que recebe dois inteiros e retorna a soma.
+// MultiCast Delegates - Um Delegate podem chamar vários métodos de uma vez
+delegate void Operacao();
 
-Crie um evento OnCarregamentoConcluido que é disparado ao terminar um método de carregamento.
-
-Use uma lambda para filtrar números pares em uma lista.
-
-Simule um botão com eventos de “clique” e “foco”.
-
-Monte um sistema de notificação com múltiplos inscritos.
-
-🔹 9. Checklist de Domínio
-
-✅ Entende o que é um delegate e como declarar
-✅ Usa Action, Func, Predicate naturalmente
-✅ Cria e dispara eventos
-✅ Usa lambdas em expressões simples
-✅ Aplica tudo em um mini projeto (ex: sistema de notificações)*/
-
-//  ---- PADRÕES MODERNOS ---- //
-
-// INTERFACES - O CONTRATO ENTRE CLASSES
-/*Uma interface define um contrato(quais métodos/propriedades devem existir), Ela não implementa, apenas obriga quem herdar a implementar*/
-interface IAnimal
+class programa
 {
-    void Comer();
-    void Dormir();
-}
+    static void Metodo1() => Console.WriteLine("Executando 1");
+    static void Metodo2() => Console.WriteLine("Executando 2");
 
-class Cachorro : IAnimal
-{
-    public void Comer() => Console.WriteLine("Cachorro comendo ...");
-    public void Dormir() => Console.WriteLine("Cachorro dormindo...");
-}
-
-class Gato : IAnimal
-{
-    public void Comer() => Console.WriteLine("Gato Comendo...");
-    public void Dormir () => Console.WriteLine("Gato dormindo... ");
-}
-
-// Usar inteface = programar voltado á abstração, não á implementação.
-
-void AlimentarAnimal(IAnimal animal)
-{
-    animal.Comer();
-}
-
-IAnimal a1 = new Cachorro();
-IAnimal a2 = new Gato();
-
-AlimentarAnimal(a1);
-AlimentarAnimal(a2);
-
-// Isso traz flxibilidade e baixo acoplamento -- base do código profissional.
-
-// ABSTRAÇÃO
-/* A Abstração esconde detalhes complexos e monstra apenas o essencial.
-Usada em classes abstratas, que servem de modelo base e não podem ser instanciadas.*/
-
-abstract class Forma
-{
-    public abstract double CalcularArea(); // obrigatório nas filhas
-}
-
-class Quadrado : Forma
-{
-    public double Lado {get; set;}
-    public override double CalcularArea() => Lado * Lado;
-}
-class Circulo : Forma
-{
-    public double Raio { get; set;}
-    public override double CalcularArea() => Math.PI * Raio * Raio;
-}
-
-/*Classe abstrada = define estrutura + comportamento mínimo
-Inferface = define apenas o contrato*/
-
-// GENÉRICOS
-class Caixa<T>
-{
-    public T valor {get; set; }
-    public void Monstrar()
+    static void Main()
     {
-        Console.WriteLine($"Valor: {Valor}");
+        Operacao op = Metodo1;
+        op += Metodo2; //adiciona
+        op(); // Executa ambos
     }
 }
-Caixa<int> caixaInt = new Caixa<int> { valor = 10 };
-Caixa<String> caixaString = new Caixa<String> { valor = "Teste"};
-caixaInt.Monstrar();
-caixaString.Monstrar();
-
-/*List<T>
-Dictionary<TKey, TValue>
-Task<T>
-Func<T> e Action<T>
-Evita duplicação de código e errro de tipo*/
-
-//COLEÇÕES E LINQ AVANÇADA
-using System.Linq;
-
-List<int> numeros = new () {2, 4, 6, 8, 10, 12};
-
-//Filtrar e consultar
-var resultado = numeros
-    .Where(nameof => n > 5)
-    .OrderbyDescending(nameof => n)
-    .Select(n => new { Numero = na, Dobro = n * 2});
-
-foreach (var item in resultado)
-    Console.WriteLine($"{item.Numero} -> {item.Dobro}");
-
-/*
-Where() --> Flitra
-Select() --> Projeta (trnasforma)
-OrderBy() / OrderByDescending() --> Orderna
-First() / FirstOrDefault() --> Retorna o primeiro
-Any() --> Retorna se existe
-Count() --> Conta os Ites
-*/
-
-/* MANIPULAÇÃO DE ARQUIVOS
-Criar e Ler um Arquivo Texto*/
-using System.IO;
-
-string caminho = "cliente.txt";
-
-// Escrever 
-File.WriteAllText(caminho, "Caio - 25\nLucas - 30");
-
-// Ler
-string conteudo = File.ReadAllText(caminho);
-Console.WriteLine(conteudo);
-
-//Adicionar Linhas
-File.AppendAllText(caminho, "\nNovo cliente - 40");
-
-// MANIPULAÇÃO DE JSON (DADOS ESTRUTURADOS)
-using System.Text.Json;
-
-var cliente = new { Nome = "Caio", Idade = 25 };
-string json = JsonSerializer.Serialize(cliente);
-
-Console.WriteLine(json); // {"Nome: "Caio", "Idade":25}
-
-var obj = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-Console.WriteLine(obj["Nome"]); // Caio
-
-// Essencial em APIs, microservices e integração externas
-
-
-// ASSÍCRONO (ASYNC / AWAIT)
-using System.Threading.Tasks;
-
-async Task BaixarDados()
-{
-    Console.WriteLine("Baixando dados...");
-    await Task.Delay(2000); // Simula espera
-    Console.WriteLine("Download concluído!");
-}
-
-await BaixarDados();
-/*async define um método assícrono. Await espera ele terminar sem travar o fluxo principal.*/
-
-// PADRÃO MVC (MODEL - VIEW - CONTROLLER)
-/*Usado no ASP.NET Core e na maioria dos frameworks modernos.*/
-/*
-Camada       Função
-Model       Regra de negócio e dados
-View        Interface (HTML, tela, console, etc)
-Controller  Lógica que liga Model - View
-*/
-
-/*/Model/cliente.cs - Model define o cliente
-/Controllers/ClienteController.cs - Controller recebe a requisição e manipula dados
-/Views/cliente/Index;cshtml - View exibe o resultado ao usuário*/
-
-// INJEÇÃO DE DEPENDÊNCIA (DI) - Permite  concectar componentes sem acoplar diretamente, facilitando manutenção e testes.
-interface IEmailService
-{
-    void EnviarEmail(string destino, string mensagem);
-}
-
-class EmailService : IEmailService
-{
-    public void EnviarEmail(string destino, string mensagem)
-        => Console.WriteLine($"Enviando email para {destino}: {mensagem}");
-}
-
-class PedidoController
-{
-    private readonly IEmailService _email;
-
-    public PedidoController(IEmailService email)
-    {
-        _email = email;
-    }
-
-    public void FinalizarPedido()
-    {
-        _email.EnviarEmail("cliente@teste.com", "Seu pedido foi confirmado !");
-    }
-}
-
-/*Isso é o coração do ASP.NET Core*/
-
-
-/* ARQUITETURA E BOAS PRATICAS
-🧰 10. Arquitetura e Boas Práticas Profissionais
-
-Prática             	            Descrição
-SOLID	                            5 princípios que deixam o código escalável
-Single Responsibility	            cada classe faz uma coisa só
-DRY (Don't Repeat Yourself)	        evite duplicar código
-KISS (Keep It Simple, Stupid)	    mantenha o código simples
-Clean Code	                        código legível > código curto
-Versionamento (Git)	                controle de versões é obrigatório
-Logging & Exceptions	            registre e trate erros com clareza*/
-
-/* TESTE UNITÁRIOS (INTRODUÇÃO)
-Simula partes do sistema isoladamente para garantir que tudo funciona.
-*/
-class calculadora
-{
-    public int Somar(int a, int b) => a + b;
-}
-
-class Teste
-{
-    public void TestarSoma()
-    {
-        var calc = new calculadora();
-        if(calc.Somar(2, 3) == 5)
-            Console.WriteLine("Teste OK!");
-        else
-            Console.WriteLine("Falhou!");
-    }
-}
-
-// DELEGATES GENÉRICOS - FUNC, ACTION E PREDICATE - O C# JÁ POSSUI DELEGATES PRONTOS, PARA EVITAR CRIAR O SEU DO ZERO
-
-// ACTION - PARA MÉTODOS SEM RETORNO
-action<string> imprimir = texto => Console.WriteLine(Texto);
-imprimir("Usando Action!");
-
-// FUNC - Para Métodos com retorno
-Func<int, int, int> somar = (a, b) => a + b;
-Console.WriteLine(somar(5, 3)); // 8
-
-// Predicate - Para funções booleanas(Muito usado em filtros)
-Predicate<int> ehPar = n => n % 2 == 0;
-Console.WriteLine(ehPar(4)); // True
-
-//💡 Esses três delegates são muito usados em LINQ, filtros, e callbacks assíncronos.
-
-// Eventos -- Comunicação entre objetos 
-
-
-// Expressões Lambda - funções curtas e anônimas
+// Delegates são imutáveis, mas o += cria uma nova cadeia de execução
 
 
 
@@ -1093,18 +827,10 @@ Console.WriteLine(ehPar(4)); // True
 
 // O QUE É LINQ ?
 
+// MANIPULAÇÃO DE ARQUIVOS E STREAMS
 
 
-// ASP.NET CORE (APIS E WEB APPS)
-
-// .NET MAIU (DESKTOP E MOBILE)
-
-// BANCO DE DADOS E ENTITY FRAMEWORK CORE
-
-// SIGNALR
-
-// BLAZOR
-
+// PROGRAMAÇÃO ASSÍCRONA (ASYNC/ AWAIT /TASK / THREADING)
  
 
 
